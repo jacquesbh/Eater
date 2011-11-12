@@ -109,7 +109,7 @@ class Eater implements ArrayAccess, Iterator
         if (is_null($name)) {
             $this->_data = array();
         } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
-            (unset) $this->_data[$name];
+            unset($this->_data[$name]);
         }
         return $this;
     }
