@@ -20,7 +20,7 @@
 /**
  * Eater class
  */
-class Eater implements ArrayAccess
+class Eater implements ArrayAccess, Iterator
 {
 
     /**
@@ -175,6 +175,62 @@ class Eater implements ArrayAccess
     }
 
     /**
+     * Current data
+     *
+     * @access public
+     * @return mixed
+     */
+    public function current()
+    {
+        return current($this->_data);
+    }
+
+    /**
+     * Current key
+     *
+     * @access public
+     * @return mixed
+     */
+    public function key()
+    {
+        return key($this->_data);
+    }
+
+    /**
+     * Next data
+     *
+     * @access public
+     * @return mixed
+     */
+    public function next()
+    {
+        return next($this->_data);
+    }
+
+    /**
+     * Rewind data
+     *
+     * @access public
+     * @return mixed
+     */
+    public function rewind()
+    {
+        return reset($this->_data);
+    }
+
+    /**
+     * Returns if key is valid
+     *
+     * @access public
+     * @return bool
+     */
+    public function valid()
+    {
+        $key = $this->key();
+        return ($key !== null && $key !== false);
+    }
+
+    /**
      * Magic CALL
      *
      * @access public
@@ -196,3 +252,7 @@ class Eater implements ArrayAccess
         }
     }
 }
+
+
+class Eater_Exception extends Exception
+{}
