@@ -175,6 +175,24 @@ class Eater implements ArrayAccess, Iterator
     }
 
     /**
+     * Merge an other Eater (or array)
+     *
+     * @param Eater|array $eater
+     * @access public
+     * @return Eater
+     */
+    public function merge($eater)
+    {
+        if (!$eater instanceof Eater && !is_array($eater)) {
+            throw new Eater_Exception('Only array or Eater are expected for merge.');
+        }
+        return $this->setData(array_merge(
+            $this->getData(),
+            ($eater instanceof Eater) ? $eater->getData() : $eater
+        ));
+    }
+
+    /**
      * Current data
      *
      * @access public
