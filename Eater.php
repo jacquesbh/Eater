@@ -1,0 +1,198 @@
+<?php
+/*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Jacques Bodin-Hullin <jacques@bodin-hullin.net>
+ * @github http://github.com/jacquesbh/Eater
+ */
+
+/**
+ * Eater class
+ */
+class Eater implements ArrayAccess
+{
+
+    /**
+     * Data
+     *
+     * @access protected
+     * @var array
+     */
+    protected $_data = array();
+
+    /**
+     * Constructor :)
+     *
+     * @access public
+     * @return void
+     */
+    public function __construct()
+    {
+        if (func_num_args()) {
+            if (is_array($data = func_get_arg(0))) {
+                $this->addData($data);
+            }
+        }
+    }
+
+    /**
+     * Add data
+     *
+     * @param array $data
+     * @access public
+     * @return Eater
+     */
+    public function addData(array $data)
+    {
+        foreach ($data as $key => $value) {
+            $this->setData($key, $value);
+        }
+        return $this;
+    }
+
+    /**
+     * Set data
+     *
+     * @param mixed $name
+     * @param mixed $value
+     * @access public
+     * @return Eater
+     */
+    public function setData($name, $value = null)
+    {
+        if (is_array($name)) {
+            $this->_data = array();
+            $this->addData($name);
+        } else {
+            $this->_data[$this->format($name)] = $value;
+        }
+        return $this;
+    }
+
+    /**
+     * Returns data
+     *
+     * @param string $name
+     * @access public
+     * @return mixed
+     */
+    public function getData($name = null)
+    {
+        if (is_null($name)) {
+            return $this->_data;
+        } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
+            return $this->_data[$name];
+        }
+        return null;
+    }
+
+    /**
+     * Unset data
+     *
+     * @param string $name
+     * @access public
+     * @return Eater
+     */
+    public function unsetData($name = null)
+    {
+        if (is_null($name)) {
+            $this->_data = array();
+        } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
+            (unset) $this->_data[$name];
+        }
+        return $this;
+    }
+
+    /**
+     * Returns if data offset exist
+     *
+     * @param mixed $offset
+     * @access public
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return array_key_exists($this->format($offset), $this->_data);
+    }
+
+    /**
+     * Returns data
+     *
+     * @param mixed $offset
+     * @access public
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->getData($offset);
+    }
+
+    /**
+     * Set data
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     * @access public
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->setData($offset, $value);
+    }
+
+    /**
+     * Unset data
+     *
+     * @param mixed $offset
+     * @access public
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        $this->unsetData($offset);
+    }
+
+    /**
+     * Format a string for storage
+     *
+     * @param string $str
+     * @return string
+     */
+    public function format($str)
+    {
+        return strtolower(preg_replace('`(.)([A-Z])`', "$1_$2", $str));
+    }
+
+    /**
+     * Magic CALL
+     *
+     * @access public
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $prefix = substr($name, 0, 3);
+        switch ($prefix) {
+            case 'set':
+                return $this->setData(substr($name, 3), $arguments[0]);
+                break;
+            case 'get':
+                return $this->getData(substr($name, 3));
+                break;
+            case 'uns':
+                return $this->unsetData(substr($name, 3));
+                break;
+        }
+    }
+}
