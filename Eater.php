@@ -84,14 +84,18 @@ class Eater implements ArrayAccess, Iterator
      * Returns data
      *
      * @param string $name
+     * @param string $field
      * @access public
      * @return mixed
      */
-    public function getData($name = null)
+    public function getData($name = null, $field = null)
     {
         if (is_null($name)) {
             return $this->_data;
         } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
+            if ($field !== null) {
+                return isset($this->_data[$name][$field]) ? $this->_data[$name][$field] : null;
+            }
             return $this->_data[$name];
         }
         return null;
@@ -262,7 +266,8 @@ class Eater implements ArrayAccess, Iterator
                 return $this->setData(substr($name, 3), $arguments[0]);
                 break;
             case 'get':
-                return $this->getData(substr($name, 3));
+                $field = isset($arguments[0]) ? $arguments[0] : null;
+                return $this->getData(substr($name, 3), $field);
                 break;
             case 'uns':
                 return $this->unsetData(substr($name, 3));
