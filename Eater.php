@@ -44,7 +44,18 @@ class Eater implements ArrayAccess, Iterator
                 $this->addData($data);
             }
         }
+        $this->_construct();
     }
+
+    /**
+     * Secondary constructor
+     * <p>Specialy for override :)</p>
+     *
+     * @access protected
+     * @return void
+     */
+    protected function _construct()
+    {}
 
     /**
      * Add data
