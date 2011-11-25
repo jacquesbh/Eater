@@ -47,6 +47,7 @@ echo "\n\n";
 
 // Unset bar
 $eat->unsBar();
+$eat->unsetBar();
 unset($eat['bar']);
 $eat->unsetData('bar');
 
@@ -61,6 +62,12 @@ echo "\n\n";
 $eat->setQux('QUX');
 $eat['qux'] = 'QUX';
 $eat->setData('qux', 'QUX');
+
+// Serialize
+$serial = serialize($eat);
+echo $serial, "\n\n";
+$eat = unserialize($serial);
+echo $eat, "\n\n";
 
 // Clean
 print_r($eat->getData());

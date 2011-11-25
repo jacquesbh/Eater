@@ -281,12 +281,41 @@ class Eater implements ArrayAccess, Iterator
                 return $this->getData(substr($name, 3), $field);
                 break;
             case 'uns':
-                return $this->unsetData(substr($name, 3));
+                $begin = 3;
+                if (substr($name, 0, 5) == 'unset') {
+                    $begin = 5;
+                }
+                return $this->unsetData(substr($name, $begin));
                 break;
         }
     }
+
+    /**
+     * Magic TOSTRING
+     *
+     * @access public
+     * @return string
+     */
+    public function __toString()
+    {
+        return json_encode($this->_data, JSON_FORCE_OBJECT);
+    }
+
+    /**
+     * Magic SLEEP
+     *
+     * @access public
+     * @return string
+     */
+    public function __sleep()
+    {
+        return array('_data');
+    }
+
+
 }
 
 
 class Eater_Exception extends Exception
 {}
+
