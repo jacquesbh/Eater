@@ -18,9 +18,14 @@
  */
 
 /**
+ * @namespace
+ */
+namespace Jacquesbh;
+
+/**
  * Eater class
  */
-class Eater implements ArrayAccess, Iterator
+class Eater implements \ArrayAccess, \Iterator, \JsonSerialize
 {
 
     /**
@@ -199,7 +204,7 @@ class Eater implements ArrayAccess, Iterator
     public function merge($eater)
     {
         if (!$eater instanceof Eater && !is_array($eater)) {
-            throw new Eater_Exception('Only array or Eater are expected for merge.');
+            throw new Eater\Exception('Only array or Eater are expected for merge.');
         }
         return $this->setData(array_merge(
             $this->getData(),
@@ -298,7 +303,18 @@ class Eater implements ArrayAccess, Iterator
      */
     public function __toString()
     {
-        return json_encode($this->_data, JSON_FORCE_OBJECT);
+        return json_encode($this, JSON_FORCE_OBJECT);
+    }
+
+    /**
+     * JsonSerializable::jsonSerialize
+     *
+     * @access public
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->_data;
     }
 
     /**
@@ -315,7 +331,8 @@ class Eater implements ArrayAccess, Iterator
 
 }
 
+namespace Jacquesbh\Eater;
 
-class Eater_Exception extends Exception
+class Exception extends \Exception
 {}
 

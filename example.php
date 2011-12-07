@@ -2,14 +2,14 @@
 
 include './Eater.php';
 
-$eat = new Eater;
+$eat = (new \Jacquesbh\Eater);
 
 // Set sample data
 $eat->setData(array(
     'foo' => 'FOO',
     'fooBar' => 'FOO_BAR',
     'foobar' => 'FOOBAR',
-    'bar' => new Eater(array('baz' => 'BAZ'))
+    'bar' => new \Jacquesbh\Eater(array('baz' => 'BAZ'))
 ));
 
 // print FOO
