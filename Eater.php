@@ -25,7 +25,7 @@ namespace Jacquesbh;
 /**
  * Eater class
  */
-class Eater implements \ArrayAccess, \Iterator, \JsonSerialize
+class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
 {
 
     /**
