@@ -187,6 +187,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * Format a string for storage
      *
      * @param string $str
+     * @access public
      * @return string
      */
     public function format($str)
@@ -271,6 +272,8 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     /**
      * Magic CALL
      *
+     * @param string $name Method name
+     * @param array $arguments Method arguments
      * @access public
      * @return mixed
      */
