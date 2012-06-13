@@ -34,7 +34,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access protected
      * @var array
      */
-    protected $_data = array();
+    protected $_data = [];
 
     /**
      * Constructor :)
@@ -127,7 +127,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     public function unsetData($name = null)
     {
         if (is_null($name)) {
-            $this->_data = array();
+            $this->_data = [];
         } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
             unset($this->_data[$name]);
         }
@@ -328,14 +328,8 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function __sleep()
     {
-        return array('_data');
+        return ['_data'];
     }
 
 
 }
-
-namespace Jacquesbh\Eater;
-
-class Exception extends \Exception
-{}
-
