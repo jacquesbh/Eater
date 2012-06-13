@@ -1,6 +1,6 @@
 {
     "name": "jacquesbh/eater",
-    "description": "A simple PHP trait for eat everything",
+    "description": "A simple PHP class for eat everything",
     "version": "2.0",
     "authors": [
         {
