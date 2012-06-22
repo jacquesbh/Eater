@@ -1,16 +1,18 @@
 <?php
 
-include './Eater.php';
+require_once 'vendor/autoload.php';
 
-$eat = (new \Jacquesbh\Eater);
+use Jacquesbh\Eater;
+
+$eat = new Eater;
 
 // Set sample data
-$eat->setData(array(
+$eat->setData([
     'foo' => 'FOO',
     'fooBar' => 'FOO_BAR',
     'foobar' => 'FOOBAR',
-    'bar' => new \Jacquesbh\Eater(array('baz' => 'BAZ'))
-));
+    'bar' => new Eater(['baz' => 'BAZ'])
+]);
 
 // print FOO
 echo $eat->getFoo();
@@ -59,6 +61,7 @@ foreach ($eat as $str) {
 echo "\n\n";
 
 // Add 'QUX'
+$eat->setQux(); // null by default
 $eat->setQux('QUX');
 $eat['qux'] = 'QUX';
 $eat->setData('qux', 'QUX');

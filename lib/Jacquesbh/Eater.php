@@ -23,6 +23,11 @@
 namespace Jacquesbh;
 
 /**
+ * @use
+ */
+use Jacquesbh\Eater\Exception;
+
+/**
  * Eater class
  */
 class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
@@ -85,11 +90,13 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function setData($name, $value = null)
+    public function setData($name = null, $value = null)
     {
-        if (is_array($name)) {
-            $this->_data = array();
-            $this->addData($name);
+        if (is_array($name) || is_null($name)) {
+            $this->_data = [];
+            if (!empty($name)) {
+                $this->addData($name);
+            }
         } else {
             $this->_data[$this->format($name)] = $value;
         }
@@ -282,7 +289,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         $prefix = substr($name, 0, 3);
         switch ($prefix) {
             case 'set':
-                return $this->setData(substr($name, 3), $arguments[0]);
+                return $this->setData(substr($name, 3), !isset($arguments[0]) ? null : $arguments[0]);
                 break;
             case 'get':
                 $field = isset($arguments[0]) ? $arguments[0] : null;
