@@ -207,7 +207,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         if (!$eater instanceof Eater && !is_array($eater)) {
             throw new Eater\Exception('Only array or Eater are expected for merge.');
         }
-        return $this->setData(array_merge(
+        return $this->setData(array_merge_recursive(
             $this->getData(),
             ($eater instanceof Eater) ? $eater->getData() : $eater
         ));
