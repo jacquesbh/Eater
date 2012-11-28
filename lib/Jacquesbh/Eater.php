@@ -118,6 +118,20 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     }
 
     /**
+     * Data exists?
+     *
+     * @param string $name
+     * @access public
+     * @return bool
+     */
+    public function hasData($name = null)
+    {
+        return is_null($name)
+            ? !empty($this->_data)
+            : array_key_exists($this->format($name), $this->_data);
+    }
+
+    /**
      * Unset data
      *
      * @param string $name
@@ -287,6 +301,9 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
             case 'get':
                 $field = isset($arguments[0]) ? $arguments[0] : null;
                 return $this->getData(substr($name, 3), $field);
+                break;
+            case 'has':
+                return $this->hasData(substr($name, 3));
                 break;
             case 'uns':
                 $begin = 3;
