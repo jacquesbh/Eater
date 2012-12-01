@@ -20,7 +20,7 @@
 /**
  * @namespace
  */
-namespace Jacquesbh;
+namespace Jacquesbh\Eater;
 
 /**
  * Eater class
