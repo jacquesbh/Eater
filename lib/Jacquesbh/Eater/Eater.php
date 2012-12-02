@@ -344,6 +344,18 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     }
 
     /**
+     * Magic ISSET
+     *
+     * @param string $name
+     * @access public
+     * @return mixed
+     */
+    public function __isset($name)
+    {
+        return $this->offsetExists($name);
+    }
+
+    /**
      * Magic TOSTRING
      *
      * @access public
