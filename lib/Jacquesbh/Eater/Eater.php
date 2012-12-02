@@ -319,6 +319,31 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     }
 
     /**
+     * Magic SET
+     *
+     * @param string $name
+     * @param mixed $value
+     * @access public
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $this->setData($name, $value);
+    }
+
+    /**
+     * Magic GET
+     *
+     * @param string $name
+     * @access public
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        return $this->getData($name);
+    }
+
+    /**
      * Magic TOSTRING
      *
      * @access public
