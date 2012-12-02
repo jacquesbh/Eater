@@ -71,7 +71,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function addData($data, $recursive = false)
     {
-        if (is_null($data) || !is_array($data) || !($data instanceof Eater)) {
+        if (is_null($data) || (!is_array($data) && !($data instanceof Eater))) {
             return $this;
         }
         foreach ($data as $key => $value) {
