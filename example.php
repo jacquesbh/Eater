@@ -1,16 +1,18 @@
 <?php
 
-include './Eater.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
-$eat = (new \Jacquesbh\Eater);
+use Jacquesbh\Eater\Eater;
+
+$eat = new Eater;
 
 // Set sample data
 $eat->setData(array(
     'foo' => 'FOO',
     'fooBar' => 'FOO_BAR',
     'foobar' => 'FOOBAR',
-    'bar' => new \Jacquesbh\Eater(array('baz' => 'BAZ'))
-));
+    'bar' => ['baz' => 'BAZ']
+), null, true);
 
 // print FOO
 echo $eat->getFoo();

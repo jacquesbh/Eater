@@ -69,9 +69,12 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function addData(array $data)
+    public function addData($data, $recursive = false)
     {
         foreach ($data as $key => $value) {
+            if ($recursive && is_array($value)) {
+                $value = (new Eater)->addData($value, $recursive);
+            }
             $this->setData($key, $value);
         }
         return $this;
@@ -85,11 +88,11 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function setData($name, $value = null)
+    public function setData($name, $value = null, $recursive = false)
     {
         if (is_array($name)) {
             $this->_data = array();
-            $this->addData($name);
+            $this->addData($name, $recursive);
         } else {
             $this->_data[$this->format($name)] = $value;
         }
