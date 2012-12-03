@@ -96,7 +96,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function setData($name, $value = null, $recursive = false)
+    public function setData($name = null, $value = null, $recursive = false)
     {
         if (is_array($name) || is_null($name)) {
             $this->_data = array();
