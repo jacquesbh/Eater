@@ -1,8 +1,8 @@
 <?php
 
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
-use Jacquesbh\Eater;
+use Jacquesbh\Eater\Eater;
 
 $eat = new Eater;
 
@@ -11,8 +11,8 @@ $eat->setData([
     'foo' => 'FOO',
     'fooBar' => 'FOO_BAR',
     'foobar' => 'FOOBAR',
-    'bar' => new Eater(['baz' => 'BAZ'])
-]);
+    'bar' => ['baz' => 'BAZ']
+), null, true);
 
 // print FOO
 echo $eat->getFoo();

@@ -8,6 +8,6 @@
 *.vim
 
 # Composer
-vendor/*
+/vendor
 composer.phar
 composer.lock

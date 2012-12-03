@@ -20,7 +20,7 @@
 /**
  * @namespace
  */
-namespace Jacquesbh;
+namespace Jacquesbh\Eater;
 
 /**
  * @use
@@ -74,9 +74,15 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function addData(array $data)
+    public function addData($data, $recursive = false)
     {
+        if (is_null($data) || (!is_array($data) && !($data instanceof Eater))) {
+            return $this;
+        }
         foreach ($data as $key => $value) {
+            if ($recursive && is_array($value)) {
+                $value = (new Eater)->addData($value, $recursive);
+            }
             $this->setData($key, $value);
         }
         return $this;
@@ -90,12 +96,12 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function setData($name = null, $value = null)
+    public function setData($name, $value = null, $recursive = false)
     {
         if (is_array($name) || is_null($name)) {
-            $this->_data = [];
+            $this->_data = array();
             if (!empty($name)) {
-                $this->addData($name);
+                $this->addData($name, $recursive);
             }
         } else {
             $this->_data[$this->format($name)] = $value;
@@ -122,6 +128,20 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
             return $this->_data[$name];
         }
         return null;
+    }
+
+    /**
+     * Data exists?
+     *
+     * @param string $name
+     * @access public
+     * @return bool
+     */
+    public function hasData($name = null)
+    {
+        return is_null($name)
+            ? !empty($this->_data)
+            : array_key_exists($this->format($name), $this->_data);
     }
 
     /**
@@ -214,7 +234,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         if (!$eater instanceof Eater && !is_array($eater)) {
             throw new Eater\Exception('Only array or Eater are expected for merge.');
         }
-        return $this->setData(array_merge(
+        return $this->setData(array_merge_recursive(
             $this->getData(),
             ($eater instanceof Eater) ? $eater->getData() : $eater
         ));
@@ -295,6 +315,9 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
                 $field = isset($arguments[0]) ? $arguments[0] : null;
                 return $this->getData(substr($name, 3), $field);
                 break;
+            case 'has':
+                return $this->hasData(substr($name, 3));
+                break;
             case 'uns':
                 $begin = 3;
                 if (substr($name, 0, 5) == 'unset') {
@@ -303,6 +326,43 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
                 return $this->unsetData(substr($name, $begin));
                 break;
         }
+    }
+
+    /**
+     * Magic SET
+     *
+     * @param string $name
+     * @param mixed $value
+     * @access public
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $this->setData($name, $value);
+    }
+
+    /**
+     * Magic GET
+     *
+     * @param string $name
+     * @access public
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        return $this->getData($name);
+    }
+
+    /**
+     * Magic ISSET
+     *
+     * @param string $name
+     * @access public
+     * @return mixed
+     */
+    public function __isset($name)
+    {
+        return $this->offsetExists($name);
     }
 
     /**
