@@ -12,7 +12,7 @@ $eat->setData([
     'fooBar' => 'FOO_BAR',
     'foobar' => 'FOOBAR',
     'bar' => ['baz' => 'BAZ']
-), null, true);
+], null, true);
 
 // print FOO
 echo $eat->getFoo();

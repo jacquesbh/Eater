@@ -123,9 +123,6 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         if (is_null($name)) {
             return $this->_data;
         } elseif (array_key_exists($name, $this->_data)) {
-            if ($field !== null) {
-                return isset($this->_data[$name][$field]) ? $this->_data[$name][$field] : null;
-            }
             return $this->_data[$name];
         }
         return $default;
