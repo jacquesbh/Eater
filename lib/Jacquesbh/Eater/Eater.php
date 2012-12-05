@@ -230,12 +230,28 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     public function merge($eater)
     {
         if (!$eater instanceof Eater && !is_array($eater)) {
-            throw new Eater\Exception('Only array or Eater are expected for merge.');
+            throw new Exception('Only array or Eater are expected for merge.');
         }
-        return $this->setData(array_merge_recursive(
-            $this->getData(),
-            ($eater instanceof Eater) ? $eater->getData() : $eater
-        ));
+
+        foreach ($eater as $key => $value) {
+            if ($this->hasData($key)) {
+                $to = $this->getData($key);
+                if ($to instanceof Eater) {
+                    if ($value instanceof Eater || is_array($value)) {
+                        $value = $to->merge($value);
+                    }
+                } elseif (is_array($to)) {
+                    if ($value instanceof Eater) {
+                        $value->merge((new Eater)->setData($to));
+                    } elseif (is_array($value)) {
+                        $value = array_merge_recursive($to, $value);
+                    }
+                }
+            }
+            $this->setData($key, $value);
+        }
+
+        return $this;
     }
 
     /**
