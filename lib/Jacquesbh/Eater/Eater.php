@@ -76,7 +76,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         }
         foreach ($data as $key => $value) {
             if ($recursive && is_array($value)) {
-                $value = (new Eater)->addData($value, $recursive);
+                $value = (new Eater)->setData($value, null, $recursive);
             }
             $this->setData($key, $value);
         }
@@ -97,8 +97,9 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
             $this->_data = array();
             $this->addData($name, $recursive);
         } else {
-            $this->_data[$this->format($name)] = $value;
+            $this->_data[$this->format($name)] = ($recursive && is_array($value) ? (new self)->setData($value) : $value);
         }
+
         return $this;
     }
 
@@ -110,17 +111,14 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return mixed
      */
-    public function getData($name = null, $field = null)
+    public function getData($name = null, $default = null)
     {
         if (is_null($name)) {
             return $this->_data;
         } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
-            if ($field !== null) {
-                return isset($this->_data[$name][$field]) ? $this->_data[$name][$field] : null;
-            }
             return $this->_data[$name];
         }
-        return null;
+        return $default;
     }
 
     /**
@@ -305,8 +303,8 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
                 return $this->setData(substr($name, 3), $arguments[0]);
                 break;
             case 'get':
-                $field = isset($arguments[0]) ? $arguments[0] : null;
-                return $this->getData(substr($name, 3), $field);
+                $default = isset($arguments[0]) ? $arguments[0] : null;
+                return $this->getData(substr($name, 3), $default);
                 break;
             case 'has':
                 return $this->hasData(substr($name, 3));
