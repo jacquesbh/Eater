@@ -7,7 +7,7 @@ use Jacquesbh\Eater\Eater;
 $eat = new Eater;
 
 // Set sample data
-$eat->setData(array(
+$eat->setData([
     'foo' => 'FOO',
     'fooBar' => 'FOO_BAR',
     'foobar' => 'FOOBAR',
@@ -61,6 +61,7 @@ foreach ($eat as $str) {
 echo "\n\n";
 
 // Add 'QUX'
+$eat->setQux(); // null by default
 $eat->setQux('QUX');
 $eat['qux'] = 'QUX';
 $eat->setData('qux', 'QUX');

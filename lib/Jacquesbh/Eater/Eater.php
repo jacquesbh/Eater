@@ -23,6 +23,11 @@
 namespace Jacquesbh\Eater;
 
 /**
+ * @use
+ */
+use Jacquesbh\Eater\Exception;
+
+/**
  * Eater class
  */
 class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
@@ -91,13 +96,15 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return Eater
      */
-    public function setData($name, $value = null, $recursive = false)
+    public function setData($name = null, $value = null, $recursive = false)
     {
-        if (is_array($name)) {
+        if (is_array($name) || is_null($name)) {
             $this->_data = array();
-            $this->addData($name, $recursive);
+            if (!empty($name)) {
+                $this->addData($name, $recursive);
+            }
         } else {
-            $this->_data[$this->format($name)] = ($recursive && is_array($value) ? (new self)->setData($value) : $value);
+            $this->_data[$name] = ($recursive && is_array($value) ? (new self)->setData($value) : $value);
         }
 
         return $this;
@@ -115,7 +122,10 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     {
         if (is_null($name)) {
             return $this->_data;
-        } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
+        } elseif (array_key_exists($name, $this->_data)) {
+            if ($field !== null) {
+                return isset($this->_data[$name][$field]) ? $this->_data[$name][$field] : null;
+            }
             return $this->_data[$name];
         }
         return $default;
@@ -132,7 +142,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     {
         return is_null($name)
             ? !empty($this->_data)
-            : array_key_exists($this->format($name), $this->_data);
+            : array_key_exists($name, $this->_data);
     }
 
     /**
@@ -146,7 +156,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     {
         if (is_null($name)) {
             $this->_data = [];
-        } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
+        } elseif (array_key_exists($name, $this->_data)) {
             unset($this->_data[$name]);
         }
         return $this;
@@ -161,7 +171,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function offsetExists($offset)
     {
-        return array_key_exists($this->format($offset), $this->_data);
+        return array_key_exists($offset, $this->_data);
     }
 
     /**
@@ -300,21 +310,21 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         $prefix = substr($name, 0, 3);
         switch ($prefix) {
             case 'set':
-                return $this->setData(substr($name, 3), $arguments[0]);
+                return $this->setData($this->format(substr($name, 3)), !isset($arguments[0]) ? null : $arguments[0]);
                 break;
             case 'get':
                 $default = isset($arguments[0]) ? $arguments[0] : null;
-                return $this->getData(substr($name, 3), $default);
+                return $this->getData($this->format(substr($name, 3)), $default);
                 break;
             case 'has':
-                return $this->hasData(substr($name, 3));
+                return $this->hasData($this->format(substr($name, 3)));
                 break;
             case 'uns':
                 $begin = 3;
                 if (substr($name, 0, 5) == 'unset') {
                     $begin = 5;
                 }
-                return $this->unsetData(substr($name, $begin));
+                return $this->unsetData($this->format(substr($name, $begin)));
                 break;
         }
     }
