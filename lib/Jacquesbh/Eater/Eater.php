@@ -25,7 +25,7 @@ namespace Jacquesbh\Eater;
 /**
  * @use
  */
-use Jacquesbh\Eater\Exception;
+use Jacquesbh\Eater\InvalidArgumentException;
 
 /**
  * Eater class
@@ -232,7 +232,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     public function merge($eater)
     {
         if (!$eater instanceof Eater && !is_array($eater)) {
-            throw new Eater\Exception('Only array or Eater are expected for merge.');
+            throw new InvalidArgumentException('Only array or Eater are expected for merge.');
         }
         return $this->setData(array_merge_recursive(
             $this->getData(),
