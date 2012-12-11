@@ -102,7 +102,7 @@ class Eater
     public function setData($name = null, $value = null, $recursive = false)
     {
         if (is_array($name) || is_null($name)) {
-            $this->_data = array();
+            $this->_data = [];
             if (!empty($name)) {
                 $this->addData($name, $recursive);
             }
