@@ -31,7 +31,7 @@ use Jacquesbh\Eater\InvalidArgumentException;
  * Eater class
  */
 class Eater
-    implements \ArrayAccess, \IteratorAggregate, \JsonSerializable
+    implements \ArrayAccess, \IteratorAggregate, \JsonSerializable, \Countable
 {
 
     /**
@@ -252,6 +252,18 @@ class Eater
     public function getIterator()
     {
         return new \ArrayIterator($this->_data);
+    }
+
+    /**
+     * Retrun the number of datas contained in the current @a Eater object. This does not include datas contained by
+     * child @a Eater instances.
+     *
+     * @access public
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->_data);
     }
 
     /**
