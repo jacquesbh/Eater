@@ -79,7 +79,7 @@ class Eater
      */
     public function addData($data, $recursive = false)
     {
-        if (is_null($data) || (!is_array($data) && !($data instanceof Eater))) {
+        if ($data === null || (!is_array($data) && !($data instanceof Eater))) {
             return $this;
         }
         foreach ($data as $key => $value) {
@@ -101,7 +101,7 @@ class Eater
      */
     public function setData($name = null, $value = null, $recursive = false)
     {
-        if (is_array($name) || is_null($name)) {
+        if (is_array($name) || $name === null) {
             $this->_data = [];
             if (!empty($name)) {
                 $this->addData($name, $recursive);
@@ -122,7 +122,7 @@ class Eater
      */
     public function getData($name = null, $field = null)
     {
-        if (is_null($name)) {
+        if ($name === null) {
             return $this->_data;
         } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
             if ($field !== null) {
@@ -142,7 +142,7 @@ class Eater
      */
     public function hasData($name = null)
     {
-        return is_null($name)
+        return $name === null
             ? !empty($this->_data)
             : array_key_exists($this->format($name), $this->_data);
     }
@@ -156,7 +156,7 @@ class Eater
      */
     public function unsetData($name = null)
     {
-        if (is_null($name)) {
+        if ($name === null) {
             $this->_data = [];
         } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
             unset($this->_data[$name]);
