@@ -30,7 +30,8 @@ use Jacquesbh\Eater\InvalidArgumentException;
 /**
  * Eater class
  */
-class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
+class Eater
+    implements \ArrayAccess, \IteratorAggregate, \JsonSerializable
 {
 
     /**
@@ -241,59 +242,14 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     }
 
     /**
-     * Current data
+     * Retrun a new external @a Iterator, used internally for foreach loops.
      *
      * @access public
-     * @return mixed
+     * @return \Iterator
      */
-    public function current()
+    public function getIterator()
     {
-        return current($this->_data);
-    }
-
-    /**
-     * Current key
-     *
-     * @access public
-     * @return mixed
-     */
-    public function key()
-    {
-        return key($this->_data);
-    }
-
-    /**
-     * Next data
-     *
-     * @access public
-     * @return mixed
-     */
-    public function next()
-    {
-        return next($this->_data);
-    }
-
-    /**
-     * Rewind data
-     *
-     * @access public
-     * @return mixed
-     */
-    public function rewind()
-    {
-        return reset($this->_data);
-    }
-
-    /**
-     * Returns if key is valid
-     *
-     * @access public
-     * @return bool
-     */
-    public function valid()
-    {
-        $key = $this->key();
-        return ($key !== null && $key !== false);
+        return new \ArrayIterator($this->_data);
     }
 
     /**
