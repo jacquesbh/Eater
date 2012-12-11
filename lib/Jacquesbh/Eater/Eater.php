@@ -55,7 +55,8 @@ class Eater
                 $this->addData($data);
             }
         }
-        $this->_construct();
+
+        call_user_func_array([$this, '_construct'], func_get_args());
     }
 
     /**
@@ -66,7 +67,8 @@ class Eater
      * @return void
      */
     protected function _construct()
-    {}
+    {
+    }
 
     /**
      * Add data
