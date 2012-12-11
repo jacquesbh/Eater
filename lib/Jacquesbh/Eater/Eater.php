@@ -25,12 +25,13 @@ namespace Jacquesbh\Eater;
 /**
  * @use
  */
-use Jacquesbh\Eater\Exception;
+use Jacquesbh\Eater\InvalidArgumentException;
 
 /**
  * Eater class
  */
-class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
+class Eater
+    implements \ArrayAccess, \IteratorAggregate, \JsonSerializable, \Countable
 {
 
     /**
@@ -54,7 +55,8 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
                 $this->addData($data);
             }
         }
-        $this->_construct();
+
+        call_user_func_array([$this, '_construct'], func_get_args());
     }
 
     /**
@@ -65,7 +67,8 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @return void
      */
     protected function _construct()
-    {}
+    {
+    }
 
     /**
      * Add data
@@ -76,12 +79,12 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function addData($data, $recursive = false)
     {
-        if (is_null($data) || (!is_array($data) && !($data instanceof Eater))) {
+        if ($data === null || (!is_array($data) && !($data instanceof Eater))) {
             return $this;
         }
         foreach ($data as $key => $value) {
             if ($recursive && is_array($value)) {
-                $value = (new Eater)->setData($value, null, $recursive);
+                $value = (new Eater)->addData($value, $recursive);
             }
             $this->setData($key, $value);
         }
@@ -98,15 +101,14 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function setData($name = null, $value = null, $recursive = false)
     {
-        if (is_array($name) || is_null($name)) {
-            $this->_data = array();
+        if (is_array($name) || $name === null) {
+            $this->_data = [];
             if (!empty($name)) {
                 $this->addData($name, $recursive);
             }
         } else {
-            $this->_data[$name] = ($recursive && is_array($value) ? (new self)->setData($value) : $value);
+            $this->_data[$this->format($name)] = $value;
         }
-
         return $this;
     }
 
@@ -118,14 +120,17 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      * @access public
      * @return mixed
      */
-    public function getData($name = null, $default = null)
+    public function getData($name = null, $field = null)
     {
-        if (is_null($name)) {
+        if ($name === null) {
             return $this->_data;
-        } elseif (array_key_exists($name, $this->_data)) {
+        } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
+            if ($field !== null) {
+                return isset($this->_data[$name][$field]) ? $this->_data[$name][$field] : null;
+            }
             return $this->_data[$name];
         }
-        return $default;
+        return null;
     }
 
     /**
@@ -137,9 +142,9 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function hasData($name = null)
     {
-        return is_null($name)
+        return $name === null
             ? !empty($this->_data)
-            : array_key_exists($name, $this->_data);
+            : array_key_exists($this->format($name), $this->_data);
     }
 
     /**
@@ -151,9 +156,9 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function unsetData($name = null)
     {
-        if (is_null($name)) {
+        if ($name === null) {
             $this->_data = [];
-        } elseif (array_key_exists($name, $this->_data)) {
+        } elseif (array_key_exists($name = $this->format($name), $this->_data)) {
             unset($this->_data[$name]);
         }
         return $this;
@@ -168,7 +173,7 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     public function offsetExists($offset)
     {
-        return array_key_exists($offset, $this->_data);
+        return array_key_exists($this->format($offset), $this->_data);
     }
 
     /**
@@ -230,84 +235,35 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
     public function merge($eater)
     {
         if (!$eater instanceof Eater && !is_array($eater)) {
-            throw new Exception('Only array or Eater are expected for merge.');
+            throw new InvalidArgumentException('Only array or Eater are expected for merge.');
         }
-
-        foreach ($eater as $key => $value) {
-            if ($this->hasData($key)) {
-                $to = $this->getData($key);
-                if ($to instanceof Eater) {
-                    if ($value instanceof Eater || is_array($value)) {
-                        $value = $to->merge($value);
-                    }
-                } elseif (is_array($to)) {
-                    if ($value instanceof Eater) {
-                        $value->merge((new Eater)->setData($to));
-                    } elseif (is_array($value)) {
-                        $value = array_merge_recursive($to, $value);
-                    }
-                }
-            }
-            $this->setData($key, $value);
-        }
-
-        return $this;
+        return $this->setData(array_merge_recursive(
+            $this->getData(),
+            ($eater instanceof Eater) ? $eater->getData() : $eater
+        ));
     }
 
     /**
-     * Current data
+     * Retrun a new external @a Iterator, used internally for foreach loops.
      *
      * @access public
-     * @return mixed
+     * @return \Iterator
      */
-    public function current()
+    public function getIterator()
     {
-        return current($this->_data);
+        return new \ArrayIterator($this->_data);
     }
 
     /**
-     * Current key
+     * Retrun the number of datas contained in the current @a Eater object. This does not include datas contained by
+     * child @a Eater instances.
      *
      * @access public
-     * @return mixed
+     * @return int
      */
-    public function key()
+    public function count()
     {
-        return key($this->_data);
-    }
-
-    /**
-     * Next data
-     *
-     * @access public
-     * @return mixed
-     */
-    public function next()
-    {
-        return next($this->_data);
-    }
-
-    /**
-     * Rewind data
-     *
-     * @access public
-     * @return mixed
-     */
-    public function rewind()
-    {
-        return reset($this->_data);
-    }
-
-    /**
-     * Returns if key is valid
-     *
-     * @access public
-     * @return bool
-     */
-    public function valid()
-    {
-        $key = $this->key();
-        return ($key !== null && $key !== false);
+        return count($this->_data);
     }
 
     /**
@@ -323,21 +279,21 @@ class Eater implements \ArrayAccess, \Iterator, \JsonSerializable
         $prefix = substr($name, 0, 3);
         switch ($prefix) {
             case 'set':
-                return $this->setData($this->format(substr($name, 3)), !isset($arguments[0]) ? null : $arguments[0]);
+                return $this->setData(substr($name, 3), !isset($arguments[0]) ? null : $arguments[0]);
                 break;
             case 'get':
-                $default = isset($arguments[0]) ? $arguments[0] : null;
-                return $this->getData($this->format(substr($name, 3)), $default);
+                $field = isset($arguments[0]) ? $arguments[0] : null;
+                return $this->getData(substr($name, 3), $field);
                 break;
             case 'has':
-                return $this->hasData($this->format(substr($name, 3)));
+                return $this->hasData(substr($name, 3));
                 break;
             case 'uns':
                 $begin = 3;
                 if (substr($name, 0, 5) == 'unset') {
                     $begin = 5;
                 }
-                return $this->unsetData($this->format(substr($name, $begin)));
+                return $this->unsetData(substr($name, $begin));
                 break;
         }
     }
