@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Jacques Bodin-Hullin <jacques@bodin-hullin.net>
+ * @author Grégory PLANCHAT <g.planchat@gmail.com>
  * @github http://github.com/jacquesbh/Eater
  */
 
@@ -23,9 +23,12 @@
 namespace Jacquesbh\Eater;
 
 /**
- * Eater Exception class
+ * @use
  */
-interface Exception
+use Jacquesbh\Eater\Exception;
+
+class InvalidArgumentException
+    extends \InvalidArgumentException
+    implements Exception
 {
 }
-
