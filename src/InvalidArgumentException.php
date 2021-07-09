@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,22 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Grégory PLANCHAT <g.planchat@gmail.com>
- * @github http://github.com/jacquesbh/Eater
+ * @author Jacques Bodin-Hullin <j.bodinhullin@monsieurbiz.com>
  */
 
-/**
- * @namespace
- */
+declare(strict_types=1);
+
 namespace Jacquesbh\Eater;
 
-/**
- * @use
- */
-use Jacquesbh\Eater\Exception;
-
-class InvalidArgumentException
-    extends \InvalidArgumentException
-    implements Exception
+class InvalidArgumentException extends \InvalidArgumentException implements Exception
 {
 }

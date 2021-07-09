@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Jacques Bodin-Hullin <j.bodinhullin@monsieurbiz.com>
- * @github https://github.com/jacquesbh/Eater
  */
+
+declare(strict_types=1);
 
 namespace Jacquesbh\Eater;
 
@@ -32,19 +33,18 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
 
     public function __construct()
     {
-        if (func_num_args()) {
-            if (is_array($data = func_get_arg(0))) {
+        if (\func_num_args()) {
+            if (\is_array($data = func_get_arg(0))) {
                 $this->addData($data);
             }
         }
-        call_user_func_array([$this, '_construct'], func_get_args());
+        \call_user_func_array([$this, '_construct'], \func_get_args());
     }
 
     /**
      * Secondary constructor
-     * <p>Specially for override :)</p>
+     * Specially for override :).
      *
-     * @access protected
      * @return void
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -59,15 +59,16 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function addData(array $data, bool $recursive = false): self
     {
-        if ($data === null || (!is_array($data) && !($data instanceof EaterInterface))) {
+        if (null === $data || (!\is_array($data) && !($data instanceof EaterInterface))) {
             return $this;
         }
         foreach ($data as $key => $value) {
-            if ($recursive && is_array($value)) {
-                $value = (new Eater)->addData($value, $recursive);
+            if ($recursive && \is_array($value)) {
+                $value = (new self())->addData($value, $recursive);
             }
             $this->setData($key, $value);
         }
+
         return $this;
     }
 
@@ -76,7 +77,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function setData($name = null, $value = null, bool $recursive = false): self
     {
-        if (is_array($name) || $name === null) {
+        if (\is_array($name) || null === $name) {
             $this->data = [];
             if (!empty($name)) {
                 $this->addData($name, $recursive);
@@ -84,6 +85,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
         } else {
             $this->data[$this->format($name)] = $value;
         }
+
         return $this;
     }
 
@@ -92,14 +94,17 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function getData($name = null, $field = null)
     {
-        if ($name === null) {
+        if (null === $name) {
             return $this->data;
-        } elseif (array_key_exists($name = $this->format($name), $this->data)) {
-            if ($field !== null) {
-                return isset($this->data[$name][$field]) ? $this->data[$name][$field] : null;
+        }
+        if (\array_key_exists($name = $this->format($name), $this->data)) {
+            if (null !== $field) {
+                return $this->data[$name][$field] ?? null;
             }
+
             return $this->data[$name];
         }
+
         return null;
     }
 
@@ -108,9 +113,9 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function hasData($name = null)
     {
-        return $name === null
+        return null === $name
             ? !empty($this->data)
-            : array_key_exists($this->format($name), $this->data);
+            : \array_key_exists($this->format($name), $this->data);
     }
 
     /**
@@ -118,11 +123,12 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function unsetData($name = null)
     {
-        if ($name === null) {
+        if (null === $name) {
             $this->data = [];
-        } elseif (array_key_exists($name = $this->format($name), $this->data)) {
+        } elseif (\array_key_exists($name = $this->format($name), $this->data)) {
             unset($this->data[$name]);
         }
+
         return $this;
     }
 
@@ -131,7 +137,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function offsetExists($offset)
     {
-        return array_key_exists($this->format($offset), $this->data);
+        return \array_key_exists($this->format($offset), $this->data);
     }
 
     /**
@@ -145,7 +151,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->setData($offset, $value);
     }
@@ -153,7 +159,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->unsetData($offset);
     }
@@ -163,7 +169,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function format($str)
     {
-        return strtolower(preg_replace('`(.)([A-Z])`', "$1_$2", $str));
+        return strtolower(preg_replace('`(.)([A-Z])`', '$1_$2', $str));
     }
 
     /**
@@ -171,9 +177,10 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function merge($eater)
     {
-        if (!$eater instanceof EaterInterface && !is_array($eater)) {
+        if (!$eater instanceof EaterInterface && !\is_array($eater)) {
             throw new InvalidArgumentException('Only array or Eater are expected for merge.');
         }
+
         return $this->setData(
             array_merge_recursive(
                 $this->getData(),
@@ -195,16 +202,14 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      */
     public function count()
     {
-        return count($this->data);
+        return \count($this->data);
     }
 
     /**
-     * Magic CALL
+     * Magic CALL.
      *
      * @param string $name Method name
      * @param array $arguments Method arguments
-     *
-     * @access public
      *
      * @return mixed
      */
@@ -215,40 +220,38 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
             case 'set':
                 return $this->setData(substr($name, 3), !isset($arguments[0]) ? null : $arguments[0]);
             case 'get':
-                $field = isset($arguments[0]) ? $arguments[0] : null;
+                $field = $arguments[0] ?? null;
+
                 return $this->getData(substr($name, 3), $field);
             case 'has':
                 return $this->hasData(substr($name, 3));
             case 'uns':
                 $begin = 3;
-                if (substr($name, 0, 5) == 'unset') {
+                if ('unset' == substr($name, 0, 5)) {
                     $begin = 5;
                 }
+
                 return $this->unsetData(substr($name, $begin));
         }
     }
 
     /**
-     * Magic SET
+     * Magic SET.
      *
      * @param string $name
      * @param mixed $value
      *
-     * @access public
-     *
      * @return void
      */
-    public function __set($name, $value)
+    public function __set($name, $value): void
     {
         $this->setData($name, $value);
     }
 
     /**
-     * Magic GET
+     * Magic GET.
      *
      * @param string $name
-     *
-     * @access public
      *
      * @return mixed
      */
@@ -258,11 +261,9 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     }
 
     /**
-     * Magic ISSET
+     * Magic ISSET.
      *
      * @param string $name
-     *
-     * @access public
      *
      * @return mixed
      */
@@ -272,21 +273,17 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     }
 
     /**
-     * Magic TOSTRING
-     *
-     * @access public
+     * Magic TOSTRING.
      *
      * @return string
      */
     public function __toString()
     {
-        return json_encode($this, JSON_FORCE_OBJECT);
+        return json_encode($this, \JSON_FORCE_OBJECT);
     }
 
     /**
-     * JsonSerializable::jsonSerialize
-     *
-     * @access public
+     * JsonSerializable::jsonSerialize.
      *
      * @return array
      */
@@ -296,9 +293,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     }
 
     /**
-     * Magic SLEEP
-     *
-     * @access public
+     * Magic SLEEP.
      *
      * @return array
      */

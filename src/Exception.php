@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,19 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Jacques Bodin-Hullin <jacques@bodin-hullin.net>
- * @github http://github.com/jacquesbh/Eater
+ * @author Jacques Bodin-Hullin <j.bodinhullin@monsieurbiz.com>
  */
 
-/**
- * @namespace
- */
+declare(strict_types=1);
+
 namespace Jacquesbh\Eater;
 
-/**
- * Eater Exception class
- */
 interface Exception
 {
 }
-

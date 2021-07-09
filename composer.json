@@ -17,6 +17,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "phpmd/phpmd": "^2.10"
+        "phpmd/phpmd": "^2.10",
+        "friendsofphp/php-cs-fixer": "^3.0"
     }
 }
