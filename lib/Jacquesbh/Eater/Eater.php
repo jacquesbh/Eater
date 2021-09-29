@@ -31,7 +31,7 @@ use Jacquesbh\Eater\InvalidArgumentException;
  * Eater class
  */
 class Eater
-    implements \ArrayAccess, \IteratorAggregate, \JsonSerializable, \Countable
+    implements \ArrayAccess, \IteratorAggregate, \JsonSerializable, \Countable, EaterInterface
 {
 
     /**
@@ -70,16 +70,13 @@ class Eater
     {
     }
 
+
     /**
-     * Add data
-     *
-     * @param array $data
-     * @access public
-     * @return Eater
+     * {@inheritdoc}
      */
     public function addData($data, $recursive = false)
     {
-        if ($data === null || (!is_array($data) && !($data instanceof Eater))) {
+        if ($data === null || (!is_array($data) && !($data instanceof EaterInterface))) {
             return $this;
         }
         foreach ($data as $key => $value) {
@@ -92,12 +89,7 @@ class Eater
     }
 
     /**
-     * Set data
-     *
-     * @param mixed $name
-     * @param mixed $value
-     * @access public
-     * @return Eater
+     * {@inheritdoc}
      */
     public function setData($name = null, $value = null, $recursive = false)
     {
@@ -113,12 +105,7 @@ class Eater
     }
 
     /**
-     * Returns data
-     *
-     * @param string $name
-     * @param string $field
-     * @access public
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData($name = null, $field = null)
     {
@@ -134,11 +121,7 @@ class Eater
     }
 
     /**
-     * Data exists?
-     *
-     * @param string $name
-     * @access public
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasData($name = null)
     {
@@ -148,11 +131,7 @@ class Eater
     }
 
     /**
-     * Unset data
-     *
-     * @param string $name
-     * @access public
-     * @return Eater
+     * {@inheritdoc}
      */
     public function unsetData($name = null)
     {
@@ -165,11 +144,7 @@ class Eater
     }
 
     /**
-     * Returns if data offset exist
-     *
-     * @param mixed $offset
-     * @access public
-     * @return bool
+     * {@inheritdoc}
      */
     public function offsetExists($offset)
     {
@@ -177,11 +152,7 @@ class Eater
     }
 
     /**
-     * Returns data
-     *
-     * @param mixed $offset
-     * @access public
-     * @return mixed
+     * {@inheritdoc}
      */
     public function offsetGet($offset)
     {
@@ -189,12 +160,7 @@ class Eater
     }
 
     /**
-     * Set data
-     *
-     * @param mixed $offset
-     * @param mixed $value
-     * @access public
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value)
     {
@@ -202,11 +168,7 @@ class Eater
     }
 
     /**
-     * Unset data
-     *
-     * @param mixed $offset
-     * @access public
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetUnset($offset)
     {
@@ -214,11 +176,7 @@ class Eater
     }
 
     /**
-     * Format a string for storage
-     *
-     * @param string $str
-     * @access public
-     * @return string
+     * {@inheritdoc}
      */
     public function format($str)
     {
@@ -226,28 +184,21 @@ class Eater
     }
 
     /**
-     * Merge an other Eater (or array)
-     *
-     * @param Eater|array $eater
-     * @access public
-     * @return Eater
+     * {@inheritdoc}
      */
     public function merge($eater)
     {
-        if (!$eater instanceof Eater && !is_array($eater)) {
+        if (!$eater instanceof EaterInterface && !is_array($eater)) {
             throw new InvalidArgumentException('Only array or Eater are expected for merge.');
         }
         return $this->setData(array_merge_recursive(
             $this->getData(),
-            ($eater instanceof Eater) ? $eater->getData() : $eater
+            ($eater instanceof EaterInterface) ? $eater->getData() : $eater
         ));
     }
 
     /**
-     * Retrun a new external @a Iterator, used internally for foreach loops.
-     *
-     * @access public
-     * @return \Iterator
+     * {@inheritdoc}
      */
     public function getIterator()
     {
@@ -255,11 +206,7 @@ class Eater
     }
 
     /**
-     * Retrun the number of datas contained in the current @a Eater object. This does not include datas contained by
-     * child @a Eater instances.
-     *
-     * @access public
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -272,6 +219,7 @@ class Eater
      * @param string $name Method name
      * @param array $arguments Method arguments
      * @access public
+     *
      * @return mixed
      */
     public function __call($name, $arguments)
@@ -304,6 +252,7 @@ class Eater
      * @param string $name
      * @param mixed $value
      * @access public
+     *
      * @return void
      */
     public function __set($name, $value)
@@ -316,6 +265,7 @@ class Eater
      *
      * @param string $name
      * @access public
+     *
      * @return mixed
      */
     public function __get($name)
@@ -328,6 +278,7 @@ class Eater
      *
      * @param string $name
      * @access public
+     *
      * @return mixed
      */
     public function __isset($name)
@@ -339,6 +290,7 @@ class Eater
      * Magic TOSTRING
      *
      * @access public
+     *
      * @return string
      */
     public function __toString()
@@ -350,6 +302,7 @@ class Eater
      * JsonSerializable::jsonSerialize
      *
      * @access public
+     *
      * @return array
      */
     public function jsonSerialize()
@@ -361,12 +314,11 @@ class Eater
      * Magic SLEEP
      *
      * @access public
+     *
      * @return string
      */
     public function __sleep()
     {
         return ['_data'];
     }
-
-
 }
