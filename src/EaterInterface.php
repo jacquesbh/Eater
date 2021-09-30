@@ -2,56 +2,42 @@
 
 namespace Jacquesbh\Eater;
 
+use ArrayAccess;
+use Countable;
 use Iterator;
+use IteratorAggregate;
+use JsonSerializable;
 
-interface EaterInterface
+interface EaterInterface extends ArrayAccess, IteratorAggregate, JsonSerializable, Countable
 {
     /**
      * @param array|EaterInterface|null $data
-     * @param bool $recursive
-     * @access public
      *
-     * @return EaterInterface
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
-    public function addData($data, $recursive = false);
+    public function addData($data, bool $recursive = false): self;
 
     /**
      * @param mixed $name
      * @param mixed $value
-     * @param bool $recursive
      *
-     * @return EaterInterface
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
-    public function setData($name = null, $value = null, $recursive = false);
+    public function setData($name = null, $value = null, bool $recursive = false): self;
 
     /**
-     * @param string $name
-     * @param string $field
-     *
      * @return mixed
      */
-    public function getData($name = null, $field = null);
+    public function getData(string $name = null, string $field = null);
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasData($name = null);
+    public function hasData(string $name = null): bool;
 
-    /**
-     * @param string $name
-     *
-     * @return EaterInterface
-     */
-    public function unsetData($name = null);
+    public function unsetData(string $name = null): self;
 
     /**
      * @param mixed $offset
-     *
-     * @return bool
      */
-    public function offsetExists($offset);
+    public function offsetExists($offset): bool;
 
     /**
      * @param mixed $offset
@@ -63,52 +49,34 @@ interface EaterInterface
     /**
      * @param mixed $offset
      * @param mixed $value
-     *
-     * @return void
      */
-    public function offsetSet($offset, $value);
+    public function offsetSet($offset, $value): void;
 
     /**
      * @param mixed $offset
-     *
-     * @return void
      */
-    public function offsetUnset($offset);
+    public function offsetUnset($offset): void;
 
     /**
      * Format a string for storage
-     *
-     * @param string $str
-     *
-     * @return string
      */
-    public function format($str);
+    public function format(string $str): string;
 
     /**
      * Merge an other Eater (or array)
      *
      * @param EaterInterface|array $eater
-     *
-     * @return EaterInterface
      */
-    public function merge($eater);
+    public function merge($eater): self;
 
     /**
      * Retrun a new external @a Iterator, used internally for foreach loops.
-     *
-     * @access public
-     *
-     * @return Iterator
      */
-    public function getIterator();
+    public function getIterator(): Iterator;
 
     /**
      * Retrun the number of datas contained in the current @a Eater object.
      * This does not include datas contained by child @a Eater instances.
-     *
-     * @access public
-     *
-     * @return int
      */
-    public function count();
+    public function count(): int;
 }

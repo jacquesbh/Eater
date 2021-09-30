@@ -13,13 +13,10 @@ declare(strict_types=1);
 
 namespace Jacquesbh\Eater;
 
-use ArrayAccess;
 use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-use JsonSerializable;
+use Iterator;
 
-class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countable, EaterInterface
+class Eater implements EaterInterface
 {
     protected array $data = [];
 
@@ -37,8 +34,6 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
      * Secondary constructor
      * Specially for override :).
      *
-     * @return void
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct(): void
@@ -48,8 +43,10 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
-    public function addData(array $data, bool $recursive = false): self
+    public function addData($data, bool $recursive = false): self
     {
         if (null === $data || (!\is_array($data) && !($data instanceof EaterInterface))) {
             return $this;
@@ -66,6 +63,9 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function setData($name = null, $value = null, bool $recursive = false): self
     {
@@ -103,7 +103,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function hasData($name = null)
+    public function hasData(string $name = null): bool
     {
         return null === $name
             ? !empty($this->data)
@@ -113,7 +113,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function unsetData($name = null)
+    public function unsetData(string $name = null): self
     {
         if (null === $name) {
             $this->data = [];
@@ -127,7 +127,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return \array_key_exists($this->format($offset), $this->data);
     }
@@ -159,7 +159,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function format($str)
+    public function format(string $str): string
     {
         return strtolower(preg_replace('`(.)([A-Z])`', '$1_$2', $str));
     }
@@ -167,7 +167,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function merge($eater)
+    public function merge($eater): self
     {
         if (!$eater instanceof EaterInterface && !\is_array($eater)) {
             throw new InvalidArgumentException('Only array or Eater are expected for merge.');
@@ -184,7 +184,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->data);
     }
@@ -192,7 +192,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->data);
     }
@@ -228,12 +228,7 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     }
 
     /**
-     * Magic SET.
-     *
-     * @param string $name
      * @param mixed $value
-     *
-     * @return void
      */
     public function __set($name, $value): void
     {
@@ -241,25 +236,14 @@ class Eater implements ArrayAccess, IteratorAggregate, JsonSerializable, Countab
     }
 
     /**
-     * Magic GET.
-     *
-     * @param string $name
-     *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->getData($name);
     }
 
-    /**
-     * Magic ISSET.
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return $this->offsetExists($name);
     }
