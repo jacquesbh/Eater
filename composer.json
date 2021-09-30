@@ -1,12 +1,12 @@
 {
     "name": "jacquesbh/eater",
-    "description": "A simple PHP class for eat everything",
+    "description": "A simple PHP class to eat everything",
     "version": "v2.0.1",
     "authors": [
         {
             "name": "Jacques Bodin-Hullin",
-            "email": "jacques@bodin-hullin.net",
-            "homepage": "http://jacquesbodinhullin.net"
+            "email": "j.bodinhullin@monsieurbiz.com",
+            "homepage": "https://jacques.sh"
         }
     ],
     "autoload": {
