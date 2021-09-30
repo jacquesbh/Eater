@@ -6,13 +6,18 @@
         {
             "name": "Jacques Bodin-Hullin",
             "email": "j.bodinhullin@monsieurbiz.com",
-            "homepage": "https://jacques.sh"
+            "homepage": "https://monsieurbiz.com"
         }
     ],
     "autoload": {
-        "psr-0": {"Jacquesbh": "lib/"}
+        "psr-4": {"Jacquesbh\\Eater\\": "src/"}
     },
     "require": {
-        "php": ">=5.4"
+        "php": ">=7.4",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpmd/phpmd": "^2.10",
+        "friendsofphp/php-cs-fixer": "^3.0"
     }
 }
