@@ -75,7 +75,7 @@ class Eater implements EaterInterface
                 $this->addData($name, $recursive);
             }
         } else {
-            $this->data[$this->format($name)] = $value;
+            $this->data[$this->format((string) $name)] = $value;
         }
 
         return $this;
