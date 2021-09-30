@@ -1,7 +1,7 @@
 {
     "name": "jacquesbh/eater",
     "description": "A simple PHP class to eat everything",
-    "version": "v2.0.1",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jacques Bodin-Hullin",
