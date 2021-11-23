@@ -70,13 +70,13 @@ interface EaterInterface extends ArrayAccess, IteratorAggregate, JsonSerializabl
     public function merge($eater): self;
 
     /**
-     * Retrun a new external @a Iterator, used internally for foreach loops.
+     * Retrun a new external Iterator, used internally for foreach loops.
      */
     public function getIterator(): Iterator;
 
     /**
-     * Retrun the number of datas contained in the current @a Eater object.
-     * This does not include datas contained by child @a Eater instances.
+     * Retrun the number of datas contained in the current Eater object.
+     * This does not include datas contained by child Eater instances.
      */
     public function count(): int;
 }
