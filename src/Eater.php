@@ -135,6 +135,7 @@ class Eater implements EaterInterface
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->getData($offset);
